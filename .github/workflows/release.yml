@@ -1,27 +1,33 @@
 name: Release CI
 
-on:
-  push:
-    branches:
-      - 'release/**'
-    tags:
-      - '**'
+on: create
+  # push:
+  #   branches:
+  #     - 'release/**'
+  #   tags:
+  #     - '**'
+
 
 jobs:
-  build:
-    name: Create Release
+  pre-fight:
+    name: Check if Release should be created
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+      - name: Dump GitHub context
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: "Please fill in the release description"
-          draft: true
-          prerelease: true
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
+      # - name: Checkout code
+      #   uses: actions/checkout@v2
+      # - name: Create Release
+      #   id: create_release
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      #   with:
+      #     tag_name: ${{ github.ref }}
+      #     release_name: Release ${{ github.ref }}
+      #     body: "Please fill in the release description"
+      #     draft: true
+      #     prerelease: true
