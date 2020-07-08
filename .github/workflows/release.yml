@@ -34,7 +34,7 @@ jobs:
         run: |
           mkdir dist
           cp launcher.sh dist
-          tar -C dist -czf ${{ github.ref }}-launcher-${{ runner.os }}.tar.gz
+          tar -C dist -czf ${{ github.ref }}-launcher-${{ runner.os }}.tar.gz .
       - name: Pre-Package (Windows)
         if: runner.os == 'Windows'
         shell: bash
