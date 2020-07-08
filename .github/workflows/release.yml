@@ -80,6 +80,7 @@ jobs:
           cp -r distribution/bin $DIST_DIR/bin
           chmod +x $DIST_DIR/bin/enso
           chmod +x $DIST_DIR/bin/project-manager
+          echo ::set-env name=DIST_VERSION::$DIST_VERSION
           echo ::set-env name=DIST_ROOT::$DIST_ROOT
           echo ::set-env name=DIST_DIR::$DIST_DIR
 
