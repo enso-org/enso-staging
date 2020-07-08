@@ -89,7 +89,8 @@ jobs:
         run: |
           ref=${{ github.ref }}
           semver=${ref#"refs/tags/"}
-          test ${{ env.DIST_VERSION }} = $semver || (echo "Tag version $semver and the binary version ${{ env.DIST_VERSION }} do not match" && false)
+          binversion=enso-${{ env.DIST_VERSION }}
+          test $binversion = $semver || (echo "Tag version $semver and the binary version $binversion do not match" && false)
 
       # Publish
       - name: Upload the Engine Artifact
@@ -221,7 +222,8 @@ jobs:
         run: |
           ref=${{ github.ref }}
           semver=${ref#"refs/tags/"}
-          test ${{ env.DIST_VERSION }} = $semver || (echo "Tag version $semver and the binary version ${{ env.DIST_VERSION }} do not match" && false)
+          binversion=enso-${{ env.DIST_VERSION }}
+          test $binversion = $semver || (echo "Tag version $semver and the binary version $binversion do not match" && false)
 
       - name: Upload the Launcher Artifact
         uses: actions/upload-artifact@v2
