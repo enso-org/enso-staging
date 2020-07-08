@@ -1,8 +1,9 @@
 name: Release CI
 
 on:
-  tags:
-    - 'enso-*.*.*'
+  push:
+    tags:
+      - 'enso-*.*.*'
 
 jobs:
   build:
