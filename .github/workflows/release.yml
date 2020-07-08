@@ -24,8 +24,10 @@ jobs:
         if: runner.os != 'Windows'
         shell: bash
         run: |
+          ref=${{ github.ref }}
+          semver=${ref#"refs/tags/"}
           echo "#!/bin/sh" > launcher.sh
-          echo "echo Hello from launcher built for ${{ runner.os }}" >> launcher.sh
+          echo "echo Hello from launcher built for ${{ runner.os }} at $semver" >> launcher.sh
           chmod +x launcher.sh
       - name: Pretend Build (Windows)
         if: runner.os == 'Windows'
@@ -38,7 +40,7 @@ jobs:
         run: |
           mkdir dist
           cp launcher.sh dist
-          tar -C dist -czf ${{ github.event.ref }}-launcher-${{ runner.os }}.tar.gz .
+          tar -C dist -czf enso-launcher-${{ runner.os }}.tar.gz .
       - name: Pre-Package (Windows)
         if: runner.os == 'Windows'
         shell: bash
@@ -49,19 +51,19 @@ jobs:
         if: runner.os == 'Windows'
         shell: powershell
         run: |
-          Compress-Archive -Path dist\* -DestinationPath ${{ github.event.ref }}-launcher-${{ runner.os }}.zip
+          Compress-Archive -Path dist\* -DestinationPath enso-launcher-${{ runner.os }}.zip
       - name: Upload artifact (Unix)
         if: runner.os != 'Windows'
         uses: actions/upload-artifact@v2
         with:
           name: launcher-${{ runner.os }}
-          path: ${{ github.event.ref }}-launcher-${{ runner.os }}.tar.gz
+          path: enso-launcher-${{ runner.os }}.tar.gz
       - name: Upload artifact (Windows)
         if: runner.os == 'Windows'
         uses: actions/upload-artifact@v2
         with:
           name: launcher-${{ runner.os }}
-          path: ${{ github.event.ref }}-launcher-${{ runner.os }}.zip
+          path: enso-launcher-${{ runner.os }}.zip
   build-engine:
     name: Build Engine
     runs-on: ubuntu-latest
@@ -83,9 +85,9 @@ jobs:
         run: |
           mkdir dist
           cp engine.sh dist
-          (cd dist && zip -r ../${{ github.event.ref }}.zip . )
+          (cd dist && zip -r ../enso.zip . )
           mkdir upload
-          mv ${{ github.event.ref }}.zip upload/
+          mv enso.zip upload/
           mv Manifest.yml upload/
       - name: Upload artifact
         uses: actions/upload-artifact@v2
@@ -112,8 +114,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.event.ref }}
-          release_name: ${{ github.event.ref }}
+          tag_name: enso
+          release_name: enso
           body: "Please fill-in the release description"
           draft: true
           prerelease: true
@@ -123,8 +125,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./engine/${{ github.event.ref }}.zip
-          asset_name: ${{ github.event.ref }}.zip
+          asset_path: ./engine/enso.zip
+          asset_name: enso.zip
           asset_content_type: application/zip
       - name: Upload Launcher (Linux)
         uses: actions/upload-release-asset@v1
@@ -132,8 +134,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./launcher-Linux/${{ github.event.ref }}-launcher-Linux.tar.gz
-          asset_name: ${{ github.event.ref }}-launcher-Linux.tar.gz # TODO move version to end
+          asset_path: ./launcher-Linux/enso-launcher-Linux.tar.gz
+          asset_name: enso-launcher-Linux.tar.gz # TODO move version to end
           asset_content_type: application/x-tar
       - name: Upload Launcher (MacOS)
         uses: actions/upload-release-asset@v1
@@ -141,8 +143,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./launcher-Linux/${{ github.event.ref }}-launcher-macOS.tar.gz
-          asset_name: ${{ github.event.ref }}-launcher-macOS.tar.gz # TODO move version to end
+          asset_path: ./launcher-Linux/enso-launcher-macOS.tar.gz
+          asset_name: enso-launcher-macOS.tar.gz # TODO move version to end
           asset_content_type: application/x-tar
       - name: Upload Launcher (Windows)
         uses: actions/upload-release-asset@v1
@@ -150,8 +152,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./launcher-Linux/${{ github.event.ref }}-launcher-Windows.zip
-          asset_name: ${{ github.event.ref }}-launcher-Windows.zip # TODO move version to end
+          asset_path: ./launcher-Linux/enso-launcher-Windows.zip
+          asset_name: enso-launcher-Windows.zip # TODO move version to end
           asset_content_type: application/zip
       - name: Upload Manifest
         uses: actions/upload-release-asset@v1
