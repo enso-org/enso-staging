@@ -6,8 +6,8 @@ on:
       - 'enso-*.*.*'
 
 jobs:
-  build:
-    name: Build artifacts
+  build-launcher:
+    name: Build Launcher
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     strategy:
@@ -16,18 +16,82 @@ jobs:
       fail-fast: true
     steps:
       - uses: actions/checkout@v2
+      - name: Pretend Build (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          echo "#!/bin/sh" > launcher.sh
+          echo "echo Hello from launcher built for ${{ runner.os }}" >> launcher.sh
+          chmod +x launcher.sh
+      - name: Pretend Build (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          Set-Content -Path launcher.bat -Value 'echo Hello from launcher built for Windows'
+      - name: Package (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          mkdir dist
+          cp launcher.sh dist
+          tar -C dist -czf ${{ github.ref }}-launcher-${{ runner.os }}.tar.gz
+      - name: Pre-Package (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          mkdir dist
+          cp launcher.bat dist
+      - name: Package (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          Compress-Archive -Path dist\* -DestinationPath ${{ github.ref }}-launcher-${{ runner.os }}.zip
+      - name: Upload artifact (Unix)
+        if: runner.os != 'Windows'
+        uses: actions/upload-artifact@v2
+        with:
+          name: launcher-${{ runner.os }}
+          path: ${{ github.ref }}-launcher-${{ runner.os }}.tar.gz
+      - name: Upload artifact (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v2
+        with:
+          name: launcher-${{ runner.os }}
+          path: ${{ github.ref }}-launcher-${{ runner.os }}.zip
+  build-engine:
+    name: Build Engine
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v2
       - name: Pretend build
         shell: bash
-        run: echo ${{ runner.os }} > release.txt
+        run: |
+          echo "#!/bin/sh" > engine.sh
+          echo "echo Hello from engine" >> engine.sh
+          chmod +x engine.sh
+      - name: Prepare Manifest
+        shell: bash
+        run: |
+          echo "todo: todo" >> Manifest.yml
+      - name: Package
+        shell: bash
+        run: |
+          mkdir dist
+          cp engine.sh dist
+          (cd dist && zip -r ../${{ github.ref }}.zip . )
+          mkdir upload
+          mv ${{ github.ref }}.zip upload/
+          mv Manifest.yml upload/
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: enso-${{ runner.os }}
-          path: release.txt
+          name: engine
+          path: upload
   create-release:
-    name: Create release
+    name: Prepare Release
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build-engine, build-launcher]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -42,15 +106,60 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
         working-directory: artifacts
-      # - name: Create Release
-      #   id: create_release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-      #   with:
-      #     tag_name: ${{ github.ref }}
-      #     release_name: ${{ github.ref }}
-      #     body: "Please fill in the release description"
-      #     draft: true
-      #     prerelease: true
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body: "Please fill-in the release description"
+          draft: true
+          prerelease: true
+      - name: Upload Engine
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./engine/${{ github.ref }}.zip
+          asset_name: ${{ github.ref }}.zip
+          asset_content_type: application/zip
+      - name: Upload Launcher (Linux)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./launcher-Linux/${{ github.ref }}-launcher-Linux.tar.gz
+          asset_name: ${{ github.ref }}-launcher-Linux.tar.gz # TODO move version to end
+          asset_content_type: application/x-tar
+      - name: Upload Launcher (MacOS)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./launcher-Linux/${{ github.ref }}-launcher-macOS.tar.gz
+          asset_name: ${{ github.ref }}-launcher-macOS.tar.gz # TODO move version to end
+          asset_content_type: application/x-tar
+      - name: Upload Launcher (Windows)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./launcher-Linux/${{ github.ref }}-launcher-Windows.zip
+          asset_name: ${{ github.ref }}-launcher-Windows.zip # TODO move version to end
+          asset_content_type: application/zip
+      - name: Upload Manifest
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./engine/Manifest.yml
+          asset_name: Manifest.yml
+          asset_content_type: application/yaml
 
