@@ -66,17 +66,23 @@ jobs:
     name: Build Engine
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    outputs:
+      semver: ${{ steps.version.outputs.semver }}
     steps:
       - uses: actions/checkout@v2
-      - name: Pretend build
+      - name: Check Version
+        id: version
         shell: bash
         run: |
           ref=${{ github.ref }}
           semver=${ref#"refs/tags/"}
-          echo "#!/bin/sh" > engine.sh
-          echo "echo Hello from engine $semver" >> engine.sh
-          chmod +x engine.sh
           echo "::set-output name=semver::$semver"
+      - name: Pretend build
+        shell: bash
+        run: |
+          echo "#!/bin/sh" > engine.sh
+          echo "echo Hello from engine at ${{ steps.version.outputs.semver }}" >> engine.sh
+          chmod +x engine.sh
       - name: Prepare Manifest
         shell: bash
         run: |
