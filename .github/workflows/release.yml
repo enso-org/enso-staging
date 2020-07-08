@@ -150,7 +150,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: artifacts/launcher-Linux/enso-launcher-macOS.tar.gz
+          asset_path: artifacts/launcher-macOS/enso-launcher-macOS.tar.gz
           asset_name: enso-launcher-macOS.tar.gz # TODO move version to end
           asset_content_type: application/x-tar
       - name: Upload Launcher (Windows)
@@ -159,7 +159,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: artifacts/launcher-Linux/enso-launcher-Windows.zip
+          asset_path: artifacts/launcher-Windows/enso-launcher-Windows.zip
           asset_name: enso-launcher-Windows.zip # TODO move version to end
           asset_content_type: application/zip
       - name: Upload Manifest
