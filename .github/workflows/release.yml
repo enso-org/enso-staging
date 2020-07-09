@@ -258,7 +258,6 @@ jobs:
 
       - name: Download GraalVM for Bundles
         shell: bash
-        # https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-20.1.0/graalvm-ce-java11-darwin-amd64-20.1.0.tar.gz
         run: |
           curl -fSL -o graalvm-linux.tar.gz "https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-${{ env.graalVersion }}/graalvm-ce-${{ env.javaVersion }}-linux-amd64-${{ env.graalVersion }}.tar.gz"
           curl -fSL -o graalvm-macos.tar.gz "https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-${{ env.graalVersion }}/graalvm-ce-${{ env.javaVersion }}-darwin-amd64-${{ env.graalVersion }}.tar.gz"
@@ -268,7 +267,7 @@ jobs:
           mkdir graalvm-windows
           (cd graalvm-linux && tar xz ../graalvm-linux.tar.gz)
           (cd graalvm-macos && tar xz ../graalvm-macos.tar.gz)
-          (cd graalvm-windows && unzip ../graalvm-windows.tar.gz)
+          (cd graalvm-windows && unzip ../graalvm-windows.zip)
 
       # As the download-artifact action does not preserve the executable bits,
       # we fix them here, so that the release assets are easy to use.
@@ -353,8 +352,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: enso-launcher-${{ env.DIST_VERSION }}-windows-amd64.tar.gz
-          asset_name: enso-launcher-${{ env.DIST_VERSION }}-windows-amd64.tar.gz
+          asset_path: enso-launcher-${{ env.DIST_VERSION }}-windows-amd64.zip
+          asset_name: enso-launcher-${{ env.DIST_VERSION }}-windows-amd64.zip
           asset_content_type: application/zip
 
       - name: Publish the Bundle (Linux)
@@ -381,8 +380,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: enso-bundle-${{ env.DIST_VERSION }}-windows-amd64.tar.gz
-          asset_name: enso-bundle-${{ env.DIST_VERSION }}-windows-amd64.tar.gz
+          asset_path: enso-bundle-${{ env.DIST_VERSION }}-windows-amd64.zip
+          asset_name: enso-bundle-${{ env.DIST_VERSION }}-windows-amd64.zip
           asset_content_type: application/zip
 
       - name: Publish the Manifest
