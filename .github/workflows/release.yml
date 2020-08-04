@@ -199,6 +199,7 @@ jobs:
           ref=${{ github.ref }}
           refversion=${ref#"refs/tags/enso-"}
           binversion=${{ env.DIST_VERSION }}
+          ${{ env.ENGINE_DIST_DIR }}/bin/enso.bat --version --json
           engineversion=$(${{ env.ENGINE_DIST_DIR }}/bin/enso.bat --version --json | jq -r '.version')
           test $binversion = $refversion || (echo "Tag version $refversion and the launcher version $binversion do not match" && false)
           test $engineversion = $refversion || (echo "Tag version $refversion and the engine version $engineversion do not match" && false)
@@ -223,7 +224,7 @@ jobs:
   create-release:
     name: Prepare Release
     runs-on: ubuntu-latest
-    needs: build-engine
+    needs: build
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
