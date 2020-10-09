@@ -940,7 +940,7 @@ lazy val runtime = (project in file("engine/runtime"))
         .value
   )
   .settings(
-    (Test / compile) := (Test / compile)
+    (Runtime / compile) := (Runtime / compile)
         .dependsOn(`std-bits` / Compile / packageBin)
         .value
   )
