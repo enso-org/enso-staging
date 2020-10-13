@@ -986,7 +986,7 @@ lazy val runtime = (project in file("engine/runtime"))
   .dependsOn(`polyglot-api`)
   .dependsOn(`text-buffer`)
   .dependsOn(searcher)
-  .dependsOn(testkit)
+  .dependsOn(testkit % Test)
 
 /* Note [Unmanaged Classpath]
  * ~~~~~~~~~~~~~~~~~~~~~~~~~~
