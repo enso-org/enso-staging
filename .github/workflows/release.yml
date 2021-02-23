@@ -306,7 +306,6 @@ jobs:
           prerelease: true
 
       - name: Login to ACR
-        if: runner.os == "Linux"
         uses: docker/login-action@v1
         with:
           registry: ensosharedwus2acr.azurecr.io
@@ -314,14 +313,12 @@ jobs:
           password: ${{ secrets.ACR_PUSH_CLIENT_SECRET }}
 
       - name: Copy the docker entrypoint script
-        if: runner.os == "Linux"
         shell: bash
         run: |
           sleep 1
           cp ./repo/tools/ci/docker/docker-entrypoint.sh ./repo/built-distribution/enso-engine-${{ env.DIST_VERSION }}-linux-amd64/enso-${{ env.DIST_VERSION }}/bin
 
       - name: Publish Runtime Docker Image
-        if: runner.os == "Linux"
         shell: bash
         run: |
           sleep 1
