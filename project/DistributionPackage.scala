@@ -362,7 +362,9 @@ object DistributionPackage {
         extract(archive, packageDir)
 
         log.info("Installing components")
-        gu(log, os, extractedGraalDir, "install", "python", "R")
+        gu(log, os, extractedGraalDir, "list")
+        gu(log, os, extractedGraalDir, "-ve", "install", "python", "R")
+        gu(log, os, extractedGraalDir, "list")
 
         log.info(s"Re-creating $archive")
         IO.delete(archive)
@@ -397,7 +399,21 @@ object DistributionPackage {
       }
       val command =
         executableFile.toPath.toAbsolutePath.toString +: arguments
-      val exitCode = Process(command, cwd = Some(graalDir)).!
+      log.info(sys.env.toString)
+      log.info("==============")
+      log.info(command.mkString(" "))
+      val exitCode = Process(
+        command,
+        cwd = Some(graalDir),
+        ("JAVA_HOME", graalDir.toPath.toAbsolutePath.toString)
+      ).!
+      val ls = Seq(
+        "ls",
+        "-l",
+        (executableFile.getParentFile.getParentFile / "languages").toPath.toAbsolutePath.toString
+      )
+      log.info(ls.mkString(" "))
+      Process(ls, cwd = Some(graalDir)).!
       if (exitCode != 0) {
         throw new RuntimeException(
           s"Failed to run '${command.mkString(" ")}'"
