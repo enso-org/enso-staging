@@ -362,7 +362,9 @@ object DistributionPackage {
         extract(archive, packageDir)
 
         log.info("Installing components")
-        gu(log, os, extractedGraalDir, "install", "python", "R")
+        gu(log, os, extractedGraalDir, "list")
+        gu(log, os, extractedGraalDir, "-ve", "install", "python", "R")
+        gu(log, os, extractedGraalDir, "list")
 
         log.info(s"Re-creating $archive")
         IO.delete(archive)
@@ -397,6 +399,7 @@ object DistributionPackage {
       }
       val command =
         executableFile.toPath.toAbsolutePath.toString +: arguments
+      log.info(command.mkString(" "))
       val exitCode = Process(command, cwd = Some(graalDir)).!
       if (exitCode != 0) {
         throw new RuntimeException(
