@@ -146,24 +146,24 @@ jobs:
           ${{runner.os }} | awk '{print tolower($0)}') bash
           tools/ci/prepare-distribution-env.sh
 
-      - name: Prepare Launcher Distribution
-        working-directory: repo
-        shell: bash
-        run: |
-          sleep 1
-          sbt buildLauncherDistribution
-      - name: Prepare Engine Distribution
-        working-directory: repo
-        shell: bash
-        run: |
-          sleep 1
-          sbt buildEngineDistribution
-      - name: Prepare Project Manager Distribution
-        working-directory: repo
-        shell: bash
-        run: |
-          sleep 1
-          sbt buildProjectManagerDistribution
+      # - name: Prepare Launcher Distribution
+      #   working-directory: repo
+      #   shell: bash
+      #   run: |
+      #     sleep 1
+      #     sbt buildLauncherDistribution
+      # - name: Prepare Engine Distribution
+      #   working-directory: repo
+      #   shell: bash
+      #   run: |
+      #     sleep 1
+      #     sbt buildEngineDistribution
+      # - name: Prepare Project Manager Distribution
+      #   working-directory: repo
+      #   shell: bash
+      #   run: |
+      #     sleep 1
+      #     sbt buildProjectManagerDistribution
       - name: Prepare GraalVM Distribution
         working-directory: repo
         shell: bash
