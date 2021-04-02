@@ -381,7 +381,7 @@ object DistributionPackage {
       * @param graalDir the directory with a GraalVM distribution
       * @param arguments the command arguments
       */
-    private def gu(
+    def gu(
       log: ManagedLogger,
       os: OS,
       graalDir: File,
@@ -397,7 +397,12 @@ object DistributionPackage {
       }
       val command =
         executableFile.toPath.toAbsolutePath.toString +: arguments
-      val exitCode = Process(command, cwd = Some(graalDir)).!
+      val exitCode = Process(
+        command,
+        Some(graalDir),
+        ("JAVA_HOME", graalDir.toPath.toAbsolutePath.toString),
+        ("GRAALVM_HOME", graalDir.toPath.toAbsolutePath.toString)
+      ).!
       if (exitCode != 0) {
         throw new RuntimeException(
           s"Failed to run '${command.mkString(" ")}'"
