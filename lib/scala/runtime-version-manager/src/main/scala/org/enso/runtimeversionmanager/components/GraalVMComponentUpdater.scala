@@ -33,14 +33,14 @@ class GraalVMComponentUpdater(runtime: GraalRuntime, os: OS)
       ("GRAALVM_HOME", runtime.path)
     )
 
-    logger.trace(
+    logger.info(
       s"command=${command.mkString(" ")}; " +
       s"JAVA_HOME=${Properties(runtime.path)}" +
       s"gu=${Properties(Paths.gu)}"
     )
     for {
       stdout <- Try(process.lazyLines(stderrLogger))
-      _ = logger.trace(stdout.mkString(System.lineSeparator()))
+      _ = logger.info(stdout.mkString(System.lineSeparator()))
     } yield ListOut.parse(stdout)
   }
 
@@ -58,14 +58,14 @@ class GraalVMComponentUpdater(runtime: GraalRuntime, os: OS)
         ("JAVA_HOME", runtime.path),
         ("GRAALVM_HOME", runtime.path)
       )
-      logger.trace(
+      logger.info(
         s"command=${command.mkString(" ")}; " +
         s"JAVA_HOME=${Properties(runtime.path)}" +
         s"gu=${Properties(Paths.gu)}"
       )
       for {
         stdout <- Try(process.lazyLines(stderrLogger))
-        _ = logger.trace(stdout.mkString(System.lineSeparator()))
+        _ = logger.info(stdout.mkString(System.lineSeparator()))
       } yield ()
     } else {
       Success(())

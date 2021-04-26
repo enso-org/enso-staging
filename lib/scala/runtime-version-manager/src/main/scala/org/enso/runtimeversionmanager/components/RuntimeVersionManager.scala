@@ -591,7 +591,7 @@ class RuntimeVersionManager(
   /** Loads the GraalVM runtime definition.
     */
   private def loadGraalRuntime(path: Path): Try[GraalRuntime] = {
-    logger.debug(s"Loading Graal runtime ${path.toAbsolutePath}.")
+    logger.info(s"Loading Graal runtime ${path.toAbsolutePath}.")
     val name = path.getFileName.toString
     for {
       version <- parseGraalRuntimeVersionString(name)
@@ -685,7 +685,7 @@ class RuntimeVersionManager(
         directory / runtimeReleaseProvider.packageFileName(runtimeVersion)
       val downloadTask =
         runtimeReleaseProvider.downloadPackage(runtimeVersion, runtimePackage)
-      logger.debug(s"Downloading ${runtimePackage.getFileName}.")
+      logger.info(s"Downloading ${runtimePackage.getFileName}.")
       userInterface.trackProgress(
         s"Downloading ${runtimePackage.getFileName}.",
         downloadTask
@@ -699,7 +699,7 @@ class RuntimeVersionManager(
         temporaryDirectoryManager.accessTemporaryDirectory(),
         Some(runtimeDirectoryName)
       )
-      logger.debug(s"Extracting ${runtimePackage.toAbsolutePath}.")
+      logger.info(s"Extracting ${runtimePackage.toAbsolutePath}.")
       userInterface.trackProgress("Extracting the runtime.", extractionTask)
       extractionTask.force()
 
@@ -714,7 +714,7 @@ class RuntimeVersionManager(
       }
 
       try {
-        logger.debug(
+        logger.info(
           s"Loading temporary runtime ${runtimeTemporaryPath.toAbsolutePath}."
         )
         val temporaryRuntime =
@@ -724,7 +724,7 @@ class RuntimeVersionManager(
               "corrupted. Reverting installation."
             )
           }
-        logger.debug(s"Installing GraalVM components to $temporaryRuntime.")
+        logger.info(s"Installing GraalVM components to $temporaryRuntime.")
         installRequiredRuntimeComponents(temporaryRuntime, os).getOrElse {
           throw InstallationError(
             "fatal: Cannot install the required runtime components."
@@ -733,7 +733,7 @@ class RuntimeVersionManager(
 
         val runtimePath =
           distributionManager.paths.runtimes / runtimeDirectoryName
-        logger.debug(
+        logger.info(
           s"Moving ${runtimeTemporaryPath.toAbsolutePath} to ${runtimePath.toAbsolutePath}."
         )
         FileSystem.atomicMove(runtimeTemporaryPath, runtimePath)
@@ -743,7 +743,7 @@ class RuntimeVersionManager(
             "fatal: Cannot load the installed runtime."
           )
         }
-        logger.debug(s"Installed $runtime.")
+        logger.info(s"Installed $runtime.")
         userInterface.logInfo(s"Installed $runtime.")
 
         runtime
@@ -763,14 +763,14 @@ class RuntimeVersionManager(
     runtime: GraalRuntime,
     os: OS
   ): Try[Unit] = {
-    logger.debug(s"Installing GraalVM components $runtime on $os.")
+    logger.info(s"Installing GraalVM components $runtime on $os.")
     val cu = componentUpdaterFactory.build(runtime, os)
     val requiredComponents =
       componentConfig.getRequiredComponents(runtime.version, os)
 
     for {
       installedComponents <- cu.list
-      _                 = logger.debug(s"Available GraalVM components: $installedComponents.")
+      _                 = logger.info(s"Available GraalVM components: $installedComponents.")
       missingComponents = requiredComponents.diff(installedComponents)
       _ <- cu.install(missingComponents)
     } yield ()
