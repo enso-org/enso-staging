@@ -8,7 +8,6 @@
   features, but they should not be relied on, as they are not considered stable
   and only the 3 latest nightly builds are kept, so the nightly versions become
   obsolete very fast. ([#1689](https://github.com/enso-org/enso/pull/1689)).
-- Foo
 
 # Enso 0.2.11 (2021-04-28)
 
