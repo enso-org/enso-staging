@@ -825,12 +825,10 @@ class SuggestionsHandlerSpec
   ): Unit = {
     val testContentRoot = Files.createTempDirectory(null).toRealPath()
     sys.addShutdownHook(FileUtils.deleteQuietly(testContentRoot.toFile))
-    val config    = newConfig(testContentRoot.toFile)
-    val router    = TestProbe("session-router")
-    val connector = TestProbe("runtime-connector")
-    val sqlDatabase = SqlDatabase(
-      config.directories.suggestionsDatabaseFile.toString
-    )
+    val config          = newConfig(testContentRoot.toFile)
+    val router          = TestProbe("session-router")
+    val connector       = TestProbe("runtime-connector")
+    val sqlDatabase     = SqlDatabase(config.directories.suggestionsDatabaseFile)
     val suggestionsRepo = new SqlSuggestionsRepo(sqlDatabase)
     val versionsRepo    = new SqlVersionsRepo(sqlDatabase)
 
