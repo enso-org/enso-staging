@@ -4,7 +4,6 @@ import java.io.File
 import java.net.URI
 import akka.actor.ActorSystem
 import org.enso.jsonrpc.JsonRpcServer
-import org.enso.languageserver.boot.DeploymentType.{Azure, Desktop}
 import org.enso.languageserver.capability.CapabilityRouter
 import org.enso.languageserver.data._
 import org.enso.languageserver.effect.ZioExec
@@ -35,7 +34,6 @@ import org.enso.languageserver.util.binary.BinaryEncoder
 import org.enso.loggingservice.{JavaLoggingLogHandler, LogLevel}
 import org.enso.polyglot.{RuntimeOptions, RuntimeServerInfo}
 import org.enso.searcher.sql.{SqlDatabase, SqlSuggestionsRepo, SqlVersionsRepo}
-import org.enso.searcher.sqlite.LockingMode
 import org.enso.text.{ContentBasedVersioning, Sha3_224VersionCalculator}
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.io.MessageEndpoint
@@ -92,19 +90,7 @@ class MainModule(serverConfig: LanguageServerConfig, logLevel: LogLevel) {
     )
   log.trace(s"Created ActorSystem $system.")
 
-  val sqlDatabase =
-    DeploymentType.fromEnvironment() match {
-      case Desktop =>
-        SqlDatabase(
-          languageServerConfig.directories.suggestionsDatabaseFile.toString
-        )
-
-      case Azure =>
-        SqlDatabase(
-          languageServerConfig.directories.suggestionsDatabaseFile.toString,
-          Some(LockingMode.UnixFlock)
-        )
-    }
+  val sqlDatabase = SqlDatabase.inmem("memdb")
 
   val suggestionsRepo = new SqlSuggestionsRepo(sqlDatabase)(system.dispatcher)
   val versionsRepo    = new SqlVersionsRepo(sqlDatabase)(system.dispatcher)
