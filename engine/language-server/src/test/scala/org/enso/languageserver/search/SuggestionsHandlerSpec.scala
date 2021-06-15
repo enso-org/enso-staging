@@ -828,9 +828,7 @@ class SuggestionsHandlerSpec
     val config    = newConfig(testContentRoot.toFile)
     val router    = TestProbe("session-router")
     val connector = TestProbe("runtime-connector")
-    val sqlDatabase = SqlDatabase(
-      config.directories.suggestionsDatabaseFile.toString
-    )
+    val sqlDatabase = SqlDatabase( config.directories.suggestionsDatabaseFile)
     val suggestionsRepo = new SqlSuggestionsRepo(sqlDatabase)
     val versionsRepo    = new SqlVersionsRepo(sqlDatabase)
 

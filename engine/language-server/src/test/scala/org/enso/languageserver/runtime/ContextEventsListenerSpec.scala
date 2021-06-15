@@ -36,7 +36,7 @@ import org.enso.languageserver.session.SessionRouter.{
 }
 import org.enso.polyglot.runtime.Runtime.Api
 import org.enso.searcher.SuggestionsRepo
-import org.enso.searcher.sql.SqlSuggestionsRepo
+import org.enso.searcher.sql.{SqlDatabase, SqlSuggestionsRepo}
 import org.enso.testkit.RetrySpec
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
@@ -490,7 +490,8 @@ class ContextEventsListenerSpec
     val contextId       = UUID.randomUUID()
     val router          = TestProbe("session-router")
     val contextRegistry = TestProbe("context-registry")
-    val repo            = SqlSuggestionsRepo(config.directories.suggestionsDatabaseFile)
+    val db              = SqlDatabase(config.directories.suggestionsDatabaseFile)
+    val repo            = new SqlSuggestionsRepo(db)
     val listener = contextRegistry.childActorOf(
       ContextEventsListener.props(
         config,
