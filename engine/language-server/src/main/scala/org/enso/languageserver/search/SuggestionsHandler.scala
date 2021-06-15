@@ -205,6 +205,7 @@ final class SuggestionsHandler(
       context.become(initialized(projectName, graph, clients - client.clientId))
 
     case msg: Api.SuggestionsDatabaseModuleUpdateNotification =>
+      logger.debug("Got module update [{}].", MaskedPath(msg.file.toPath))
       val isVersionChanged =
         fileVersionsRepo.getVersion(msg.file).map { digestOpt =>
           !digestOpt.map(ContentVersion(_)).contains(msg.version)
@@ -217,12 +218,20 @@ final class SuggestionsHandler(
       applyUpdatesIfVersionChanged
         .onComplete {
           case Success(Some(notification)) =>
+            logger.debug(
+              "Complete module update [{}].",
+              MaskedPath(msg.file.toPath)
+            )
             if (notification.updates.nonEmpty) {
               clients.foreach { clientId =>
                 sessionRouter ! DeliverToJsonController(clientId, notification)
               }
             }
           case Success(None) =>
+            logger.debug(
+              "Skip module update, version not changed [{}].",
+              MaskedPath(msg.file.toPath)
+            )
           case Failure(ex) =>
             logger.error(
               "Error applying suggestion database updates [{}, {}]. {}",
