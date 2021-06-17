@@ -17,7 +17,7 @@ import org.enso.languageserver.data.{
   Config,
   ReceivesSuggestionsDatabaseUpdates
 }
-import org.enso.languageserver.event.InitializedEvent
+import org.enso.languageserver.event.{InitializedEvent, JsonSessionInitialized}
 import org.enso.languageserver.filemanager.{FileDeletedEvent, Path}
 import org.enso.languageserver.refactoring.ProjectNameChangedEvent
 import org.enso.languageserver.search.SearchProtocol._
@@ -110,12 +110,8 @@ final class SuggestionsHandler(
       .subscribe(self, InitializedEvent.SuggestionsRepoInitialized.getClass)
     context.system.eventStream
       .subscribe(self, InitializedEvent.TruffleContextInitialized.getClass)
-
-    config.contentRoots.foreach { case (_, contentRoot) =>
-      PackageManager.Default
-        .fromDirectory(contentRoot)
-        .foreach(pkg => self ! ProjectNameUpdated(pkg.config.name))
-    }
+    context.system.eventStream
+      .subscribe(self, classOf[JsonSessionInitialized])
   }
 
   override def receive: Receive =
@@ -156,6 +152,26 @@ final class SuggestionsHandler(
     case Api.Response(_, Api.GetTypeGraphResponse(g)) =>
       logger.info("Initializing: got type graph response.")
       tryInitialize(init.copy(typeGraph = Some(g)))
+
+    case _: JsonSessionInitialized =>
+      logger.info("Initializing: Json session initialized.")
+      config.contentRoots.foreach {
+        case (_, root) =>
+          PackageManager.Default
+            .loadPackage(root)
+            .fold(
+              t => {
+                logger.error(
+                  "Failed to read the package definition from [{}]. {} {}",
+                  MaskedPath(root.toPath),
+                  t.getClass.getName,
+                  t.getMessage
+                )
+              },
+              pkg => self ! ProjectNameUpdated(pkg.config.name)
+            )
+        case _ =>
+      }
 
     case _ => stash()
   }
