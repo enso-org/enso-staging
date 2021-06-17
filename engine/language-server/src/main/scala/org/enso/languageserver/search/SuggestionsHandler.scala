@@ -117,8 +117,18 @@ final class SuggestionsHandler(
     config.contentRoots.foreach {
       case (_, root) if root.`type` == ContentRootType.Project =>
         PackageManager.Default
-          .fromDirectory(root.file)
-          .foreach(pkg => self ! ProjectNameUpdated(pkg.config.name))
+          .loadPackage(root.file)
+          .fold(
+            t => {
+              logger.error(
+                "Failed to read the package definition from [{}]. {} {}",
+                MaskedPath(root.file.toPath),
+                t.getClass.getName,
+                t.getMessage
+              )
+            },
+            pkg => self ! ProjectNameUpdated(pkg.config.name)
+          )
       case _ =>
     }
   }
