@@ -124,11 +124,9 @@ jobs:
           sbt --no-colors bootstrap
 
       - name: Verify the Stdlib Version
-        working-directory: repo
-        shell: bash
         run: |
           sleep 1
-          sbt --no-colors stdlib-version-updater/run check
+          sbt --no-colors "stdlib-version-updater/run check"
 
       # Compile
       - name: Build Enso
