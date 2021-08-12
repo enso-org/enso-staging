@@ -1,4 +1,4 @@
-name: Release CI
+name: Fast Release
 
 on:
   push:
@@ -21,7 +21,6 @@ jobs:
   create-release:
     name: Prepare Release
     runs-on: ubuntu-18.04
-    needs: build
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
