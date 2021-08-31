@@ -433,6 +433,11 @@ public class Module implements TruffleObject {
       return context.getCompiler().generateDocs(module);
     }
 
+    private static Object gatherImportStatements(Module module, Context context) {
+      Object[] imports = context.getCompiler().gatherImportStatements(module);
+      return new Array(imports);
+    }
+
     @Specialization
     static Object doInvoke(
         Module module,
@@ -454,6 +459,8 @@ public class Module implements TruffleObject {
           return reparse(module, arguments, context);
         case MethodNames.Module.GENERATE_DOCS:
           return generateDocs(module, context);
+        case MethodNames.Module.GATHER_IMPORT_STATEMENTS:
+          return gatherImportStatements(module, context);
         case MethodNames.Module.SET_SOURCE:
           return setSource(module, arguments, context);
         case MethodNames.Module.SET_SOURCE_FILE:
