@@ -15,7 +15,6 @@ import org.enso.logger.masking.MaskedPath
 import java.io.IOException
 import java.nio.charset.{Charset, StandardCharsets}
 import java.nio.file._
-import java.util.logging.Level
 import scala.jdk.OptionConverters._
 import scala.util.Using
 
@@ -60,8 +59,7 @@ class ModuleCache(private val module: Module) {
       case None =>
     }
 
-    logger.log(
-      Level.INFO,
+    logger.warning(
       s"Unable to write cache data for module [${this.module.getName.toString}]."
     )
 
@@ -84,8 +82,7 @@ class ModuleCache(private val module: Module) {
       case Some(root) =>
         loadCacheFrom(root) match {
           case cache @ Some(_) =>
-            logger.log(
-              Level.INFO,
+            logger.fine(
               s"Using cache for module " +
               s"[${module.getName.toString}] at location " +
               s"[${root.toMaskedPath.applyMasking()}]."
@@ -101,8 +98,7 @@ class ModuleCache(private val module: Module) {
       case Some(root) =>
         loadCacheFrom(root) match {
           case cache @ Some(_) =>
-            logger.log(
-              Level.INFO,
+            logger.fine(
               s"Using cache for module " +
               s"[${module.getName.toString}] at location " +
               s"[${root.toMaskedPath.applyMasking()}]."
@@ -113,8 +109,7 @@ class ModuleCache(private val module: Module) {
       case None =>
     }
 
-    logger.log(
-      Level.INFO,
+    logger.fine(
       s"Unable to load a cache for module [${module.getName.toString}]"
     )
 
@@ -150,8 +145,7 @@ class ModuleCache(private val module: Module) {
       val metadataFile  = getCacheMetadataPath(cacheRoot)
 
       if (writeBytesTo(cacheDataFile, bytesToWrite)) {
-        logger.log(
-          Level.INFO,
+        logger.fine(
           s"Written cache data for module " +
           s"[${this.module.getName.toString}] " +
           s"to [${cacheDataFile.toMaskedPath.applyMasking()}]."
@@ -221,8 +215,7 @@ class ModuleCache(private val module: Module) {
             )
           )
         } else {
-          logger.log(
-            Level.INFO,
+          logger.fine(
             s"One or more digests did not match for the cache for " +
             s"module [${module.getName.toString}]."
           )
@@ -230,8 +223,7 @@ class ModuleCache(private val module: Module) {
           None
         }
       case None =>
-        logger.log(
-          Level.INFO,
+        logger.fine(
           s"Could not load the cache metadata " +
           s"at [${metadataPath.toMaskedPath.applyMasking()}]"
         )
@@ -279,13 +271,11 @@ class ModuleCache(private val module: Module) {
       try {
         if (file.isWritable) {
           file.delete()
-          logger.log(
-            Level.INFO,
+          logger.fine(
             s"Invalidated the cache at [${file.toMaskedPath.applyMasking()}]."
           )
         } else {
-          logger.log(
-            Level.INFO,
+          logger.fine(
             s"Cannot invalidate the cache at " +
             s"[${file.toMaskedPath.applyMasking()}]. " +
             s"Cache location not writable."
@@ -296,8 +286,7 @@ class ModuleCache(private val module: Module) {
         // If it doesn't exist, our work has already been done for us!
         case _: DirectoryNotEmptyException | _: IOException |
             _: SecurityException =>
-          logger.log(
-            Level.SEVERE,
+          logger.severe(
             s"Unable to delete the cache at " +
             s"[${cacheRoot.toMaskedPath.applyMasking()}]."
           )
