@@ -191,7 +191,7 @@ class ProjectManagementApiSpec
       meta shouldBe Symbol("file")
     }
 
-    "create project from orders template" in {
+    "create project from orders template" taggedAs Retry ignore {
       val projectName = "Foo"
 
       implicit val client = new WsTestClient(address)
