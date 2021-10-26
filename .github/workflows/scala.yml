@@ -354,10 +354,17 @@ jobs:
           $ENGINE_DIST_DIR/bin/enso.bat --ir-caches --run test/Image_Tests
 
       # Publish
+      - name: Debug1
+        shell: bash
+        run: env
+
       - name: Debug2
         shell: bash
-        working-directory: ${{ env.ENGINE_DIST_ROOT }}
-        run: ls -la
+        run: ls -la $GITHUB_WORKSPACE
+
+      - name: Debug3
+        shell: bash
+        run: ls -laR $GITHUB_WORKSPACE
         
       - name: Compress the built artifacts for upload
         # The artifacts are compressed before upload to work around an error with long path handling in the upload-artifact action on Windows.
