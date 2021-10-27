@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 DIST_ARCH=amd64
-BUILD_ROOT=$PWD/enso/built-distribution
+ENSO_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )/../.." &> /dev/null && pwd )"
+BUILD_ROOT=$ENSO_DIR/built-distribution
 LAUNCHER_DIST_NAME=enso-launcher-$DIST_VERSION-$DIST_OS-$DIST_ARCH
 LAUNCHER_DIST_ROOT=$BUILD_ROOT/$LAUNCHER_DIST_NAME
 LAUNCHER_DIST_DIR=$LAUNCHER_DIST_ROOT/enso
