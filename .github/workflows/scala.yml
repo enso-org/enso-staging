@@ -406,13 +406,13 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           mkdir parser-upload
-          cp ./target/scala-parser.js parser-upload
+          cp ${{ env.ENSO_ROOT }}/target/scala-parser.js parser-upload
       - name: Publish the Parser JS Bundle
         if: runner.os == 'Linux'
         uses: actions/upload-artifact@v2
         with:
           name: Parser JS Bundle
-          path: ./target/scala-parser.js
+          path: ${{ env.ENSO_ROOT }}/target/scala-parser.js
       #      - name: Publish the standard library docs
       #        if: runner.os == 'Linux'
       #        uses: andstor/copycat-action@v3
