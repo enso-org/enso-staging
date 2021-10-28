@@ -29,7 +29,7 @@ jobs:
     timeout-minutes: 120
     strategy:
       matrix:
-        os: [macOS-latest, ubuntu-latest, self-hosted, windows-latest]
+        os: [macOS-latest, ubuntu-latest, windows-latest]
       fail-fast: false
     steps:
       - uses: actions/checkout@v2
@@ -366,12 +366,22 @@ jobs:
         shell: bash
         run: ls -laR $GITHUB_WORKSPACE
         
-      - name: Compress the built artifacts for upload
+      - name: Compress the built artifacts for upload (non-Win)
         # The artifacts are compressed before upload to work around an error with long path handling in the upload-artifact action on Windows.
         # See: https://github.com/actions/upload-artifact/issues/240
         shell: bash
+        if: runner.os != 'Windows'
         working-directory: ${{ env.ENGINE_DIST_ROOT }}
         run: 7z a -r ${{ env.ENGINE_DIST_NAME }}.zip *
+        
+      - name: Compress the built artifacts for upload (Win)
+        # The artifacts are compressed before upload to work around an error with long path handling in the upload-artifact action on Windows.
+        # See: https://github.com/actions/upload-artifact/issues/240
+        shell: bash
+        if: runner.os == 'Windows'
+        working-directory: ${{ env.ENGINE_DIST_ROOT }}
+        run: 7z a -r `cygpath -wa ${{ env.ENGINE_DIST_NAME }}.zip` *
+
       - name: Publish the Engine Distribution Artifact
         uses: actions/upload-artifact@v2
         with:
