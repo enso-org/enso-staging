@@ -27,7 +27,7 @@ jobs:
         with:
           clean: false
           path: ci-build
-          ref: artifact
+          ref: artifacts
           repository: enso-org/ci-build
       - uses: actions/checkout@v2
         with:
@@ -50,7 +50,7 @@ jobs:
         with:
           clean: false
           path: ci-build
-          ref: artifact
+          ref: artifacts
           repository: enso-org/ci-build
       - uses: actions/checkout@v2
         with:
@@ -81,7 +81,7 @@ jobs:
         with:
           clean: false
           path: ci-build
-          ref: artifact
+          ref: artifacts
           repository: enso-org/ci-build
       - uses: actions/checkout@v2
         with:
