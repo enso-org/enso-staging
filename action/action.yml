@@ -35,7 +35,7 @@ runs:
     - uses: actions/github-script@v6
       with:
         script: |
-          await exec.exec('cargo', ['build', '--release', '--bin', 'enso-build'], {'cwd': '${{ github.workspace }}/ci-build'});
+          await exec.exec('cargo', ['build', '--release', '--bin', 'enso-build'], {'cwd': String.raw'${{ github.workspace }}/ci-build'});
 #    - name: Build the build script
 #      run: cargo build --release --bin enso-build
 #      working-directory: ${{ github.workspace }}/ci-build
