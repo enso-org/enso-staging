@@ -1,5 +1,5 @@
-name: 'Prepare Enso Build'
-description: 'Installs enso-build.'
+name: 'Install Enso Build'
+description: 'Installs enso-build tool.'
 inputs:
   clean:
     description: Whether the local build script repository should be cleaned.
