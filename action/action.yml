@@ -1,0 +1,55 @@
+name: 'Run build script'
+description: 'Runs the new build script.'
+inputs:
+  clean:
+    description: Whether the local build script repository should be cleaned.
+    required: true
+    default: 'false'
+  ref:
+    description: Reference of the ci-build repository to use.
+    required: true
+    default: 'deployed'
+  target:
+    description: Path to the target Enso repository.
+    required: true
+#    default: '../enso'
+  command:
+    description: Command to the script.
+    required: true
+
+#outputs:
+#  random-number:
+#    description: "Random number"
+#    value: ${{ steps.random-number-generator.outputs.random-id }}
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v2
+      with:
+        clean: false
+        path: ci-build
+        ref: ${{ inputs.ref }}
+        repository: enso-org/ci-build
+
+    - name: Setup conda
+      uses: s-weigand/setup-conda@v1.0.5
+      if: startsWith(runner.name, 'GitHub Actions') # GitHub-hosted runner.
+      with:
+        update-conda: false
+        conda-channels: anaconda, conda-forge
+
+    # Runs a set of commands using the runners shell
+    - name: Build the build script
+      run: cargo build --release --bin enso-build
+      working-directory: ${{ github.workspace }}/ci-build
+    - uses: actions/github-script@v5
+      with:
+        script: |
+          core.exportVariable("ACTIONS_RUNTIME_TOKEN", process.env["ACTIONS_RUNTIME_TOKEN"])
+          core.exportVariable("ACTIONS_RUNTIME_URL", process.env["ACTIONS_RUNTIME_URL"])
+          core.exportVariable("GITHUB_RETENTION_DAYS", process.env["GITHUB_RETENTION_DAYS"])
+    - name: Run the build script
+      run: cargo run --release --bin enso-build -- ${{ inputs.target }} ${{ inputs.command }}
+      working-directory: ${{ github.workspace }}/ci-build
+      env:
+        GITHUB_TOKEN: ${{ github.token }}

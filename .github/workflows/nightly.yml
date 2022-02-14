@@ -1,4 +1,3 @@
-# TODO we may consider merging this with `release.yml` as there is quite an overlap
 name: Nightly Release CI
 
 env:
@@ -23,21 +22,28 @@ jobs:
       ENSO_VERSION: ${{ steps.prepare-step.outputs.ENSO_VERSION }}
       ENSO_RELEASE_ID: ${{ steps.prepare-step.outputs.ENSO_RELEASE_ID }}
     steps:
-      - uses: actions/checkout@v2
-        with:
-          clean: false
-          path: ci-build
-          ref: develop
-          repository: enso-org/ci-build
+#      - uses: actions/checkout@v2
+#        with:
+#          clean: false
+#          path: ci-build
+#          ref: develop
+#          repository: enso-org/ci-build
       - uses: actions/checkout@v2
         with:
           path: enso
-      - name: Run a multi-line script
-        id: prepare-step
-        run: cargo run --bin enso-build -- ../enso --kind nightly prepare
-        working-directory: ${{ github.workspace }}/ci-build
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+      - uses: ./enso/action
+        with:
+          ref: develop
+          target: enso
+          command: "--kind nightly prepare"
+
+
+  #      - name: Run a multi-line script
+#        id: prepare-step
+#        run: cargo run --bin enso-build -- ../enso --kind nightly prepare
+#        working-directory: ${{ github.workspace }}/ci-build
+#        env:
+#          GITHUB_TOKEN: ${{ github.token }}
 
   finish:
     runs-on: [self-hosted]
@@ -89,30 +95,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          clean: false
-          path: ci-build
-          ref: develop
-          repository: enso-org/ci-build
-      - uses: actions/checkout@v2
-        with:
           path: enso
-
-      - name: Setup conda
-        uses: s-weigand/setup-conda@v1.0.5
-        if: contains(matrix.os, 'self-hosted') == false
+      - uses: ./enso/action
         with:
-          update-conda: false
-          conda-channels: anaconda, conda-forge
-
-      # Runs a set of commands using the runners shell
-      - uses: actions/github-script@v5
-        with:
-          script: |
-            core.exportVariable("ACTIONS_RUNTIME_TOKEN", process.env["ACTIONS_RUNTIME_TOKEN"])
-            core.exportVariable("ACTIONS_RUNTIME_URL", process.env["ACTIONS_RUNTIME_URL"])
-            core.exportVariable("GITHUB_RETENTION_DAYS", process.env["GITHUB_RETENTION_DAYS"])
-      - name: Run a multi-line script
-        run: cargo run --bin enso-build -- ../enso --kind nightly upload
-        working-directory: ${{ github.workspace }}/ci-build
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+          ref: develop
+          target: enso
+          command: "--kind nightly upload"
