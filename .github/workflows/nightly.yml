@@ -23,9 +23,7 @@ jobs:
       ENSO_RELEASE_ID: ${{ steps.prepare-step.outputs.ENSO_RELEASE_ID }}
     steps:
       - uses: enso-org/ci-build/actions/install@develop
-        with:
-          ref: develop
-      - run: enso-build enso --kind nightly create
+      - run: enso-build enso --kind nightly create-release
         id: prepare-step
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -38,10 +36,8 @@ jobs:
       ENSO_RELEASE_ID: ${{needs.prepare.outputs.ENSO_RELEASE_ID}}
     steps:
       - uses: enso-org/ci-build/actions/install@develop
-        with:
-          ref: develop
       - name: Prepare release
-        run: enso-build enso --kind nightly publish
+        run: enso-build enso --kind nightly publish-release
         working-directory: ${{ github.workspace }}/ci-build
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -66,6 +62,4 @@ jobs:
 
     steps:
       - uses: enso-org/ci-build/actions/install@develop
-        with:
-          ref: develop
-      - run: enso-build enso --kind nightly upload
+      - run: enso-build enso --kind nightly upload-asset
