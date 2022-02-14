@@ -22,7 +22,7 @@ jobs:
       ENSO_VERSION: ${{ steps.prepare-step.outputs.ENSO_VERSION }}
       ENSO_RELEASE_ID: ${{ steps.prepare-step.outputs.ENSO_RELEASE_ID }}
     steps:
-      - uses: ./enso/action
+      - uses: ${{ github.repository }}/action@${{github.sha}}
         with:
           ref: develop
       - name: Run a multi-line script
