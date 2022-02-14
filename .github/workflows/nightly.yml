@@ -37,24 +37,11 @@ jobs:
       ENSO_VERSION: ${{needs.prepare.outputs.ENSO_VERSION}}
       ENSO_RELEASE_ID: ${{needs.prepare.outputs.ENSO_RELEASE_ID}}
     steps:
-      - uses: actions/checkout@v2
+      - uses: enso-org/ci-build/actions/install@develop
         with:
-          clean: false
-          path: ci-build
           ref: develop
-          repository: enso-org/ci-build
-      - uses: actions/checkout@v2
-        with:
-          path: enso
-      - uses: actions/github-script@v5
-        with:
-          script: |
-            core.exportVariable("ACTIONS_RUNTIME_TOKEN", process.env["ACTIONS_RUNTIME_TOKEN"])
-            core.exportVariable("ACTIONS_RUNTIME_URL", process.env["ACTIONS_RUNTIME_URL"])
-            core.exportVariable("GITHUB_RETENTION_DAYS", process.env["GITHUB_RETENTION_DAYS"])
-      - name: Run a multi-line script
-        id: prepare-step
-        run: cargo run --bin enso-build -- ../enso --kind nightly finish
+      - name: Prepare release
+        run: enso-build enso --kind nightly prepare
         working-directory: ${{ github.workspace }}/ci-build
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -78,10 +65,7 @@ jobs:
       fail-fast: false
 
     steps:
-      - uses: actions/checkout@v2
-        with:
-          path: enso
-      - uses: ./enso/action
+      - uses: enso-org/ci-build/actions/install@develop
         with:
           ref: develop
       - run: enso-build enso --kind nightly upload
