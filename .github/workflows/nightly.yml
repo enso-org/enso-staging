@@ -35,7 +35,7 @@ jobs:
         id: prepare-step
         with:
           ref: develop
-          target: enso
+          target: ${{ github.workspace }}/enso
           command: "--kind nightly prepare"
 
 
