@@ -14,8 +14,8 @@ runs:
   using: "composite"
   steps:
     - uses: actions/checkout@v2
-        with:
-          path: enso
+      with:
+        path: enso
 
     - uses: actions/checkout@v2
       with:
