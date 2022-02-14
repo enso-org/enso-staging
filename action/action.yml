@@ -42,6 +42,7 @@ runs:
     - name: Build the build script
       run: cargo build --release --bin enso-build
       working-directory: ${{ github.workspace }}/ci-build
+      shell: bash
     - uses: actions/github-script@v5
       with:
         script: |
@@ -50,6 +51,7 @@ runs:
           core.exportVariable("GITHUB_RETENTION_DAYS", process.env["GITHUB_RETENTION_DAYS"])
     - name: Run the build script
       run: cargo run --release --bin enso-build -- ${{ inputs.target }} ${{ inputs.command }}
+      shell: bash
       working-directory: ${{ github.workspace }}/ci-build
       env:
         GITHUB_TOKEN: ${{ github.token }}
