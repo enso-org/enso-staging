@@ -9,13 +9,6 @@ inputs:
     description: Reference of the ci-build repository to use.
     required: true
     default: 'deployed'
-  target:
-    description: Path to the target Enso repository.
-    required: true
-#    default: '../enso'
-  command:
-    description: Command to the script.
-    required: true
 
 runs:
   using: "composite"
