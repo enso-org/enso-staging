@@ -32,10 +32,14 @@ runs:
         conda-channels: anaconda, conda-forge
 
     # Runs a set of commands using the runners shell
-    - name: Build the build script
-      run: cargo build --release --bin enso-build
-      working-directory: ${{ github.workspace }}/ci-build
-      shell: ${{ runner.os == 'Windows' && 'pwsh' || 'bash' }}
+    - uses: actions/github-script@v6
+      with:
+        script: |
+          await exec.exec('cargo', ['build', '--release', '--bin', 'enso-build', {'cwd': '${{ github.workspace }}/ci-build'}]);
+#    - name: Build the build script
+#      run: cargo build --release --bin enso-build
+#      working-directory: ${{ github.workspace }}/ci-build
+#      shell: ${{ runner.os == 'Windows' && 'pwsh' || 'bash' }}
 
     - uses: actions/github-script@v5
       with:
