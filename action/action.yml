@@ -49,6 +49,7 @@ runs:
           core.exportVariable("ACTIONS_RUNTIME_TOKEN", process.env["ACTIONS_RUNTIME_TOKEN"])
           core.exportVariable("ACTIONS_RUNTIME_URL", process.env["ACTIONS_RUNTIME_URL"])
           core.exportVariable("GITHUB_RETENTION_DAYS", process.env["GITHUB_RETENTION_DAYS"])
+
     - name: Run the build script
       run: cargo run --release --bin enso-build -- ${{ inputs.target }} ${{ inputs.command }}
       shell: bash
