@@ -25,10 +25,7 @@ jobs:
       - uses: enso-org/enso-staging/action@develop
         with:
           ref: develop
-      - name: Run a multi-line script
-        id: prepare-step
-        run: cargo run --bin enso-build -- ../enso --kind nightly prepare
-        working-directory: ${{ github.workspace }}/ci-build
+      - run: enso-build enso --kind nightly prepare
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
@@ -86,5 +83,4 @@ jobs:
       - uses: ./enso/action
         with:
           ref: develop
-          target: enso
-          command: "--kind nightly upload"
+      - run: enso-build enso --kind nightly upload

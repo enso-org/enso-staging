@@ -1,5 +1,5 @@
-name: 'Run build script'
-description: 'Runs the new build script.'
+name: 'Prepare Enso Build'
+description: 'Installs enso-build.'
 inputs:
   clean:
     description: Whether the local build script repository should be cleaned.
@@ -15,11 +15,7 @@ runs:
   steps:
     - uses: actions/checkout@v2
       with:
-        path: enso
-
-    - uses: actions/checkout@v2
-      with:
-        clean: false
+        clean: ${{ inputs.clean }}
         path: ci-build
         ref: ${{ inputs.ref }}
         repository: enso-org/ci-build
@@ -35,6 +31,7 @@ runs:
     - uses: actions/github-script@v6
       with:
         script: |
+          console.warn(process.env)
           core.addPath(String.raw`${{ runner.temp }}/bin`);
           await exec.exec('cargo', ['install', '--root', String.raw`${{ runner.temp }}`, '--bins', '--path', './build'], {'cwd': String.raw`${{ github.workspace }}/ci-build`});
           core.exportVariable("ACTIONS_RUNTIME_TOKEN", process.env["ACTIONS_RUNTIME_TOKEN"])
