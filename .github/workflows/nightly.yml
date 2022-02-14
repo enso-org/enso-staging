@@ -25,7 +25,7 @@ jobs:
       - uses: enso-org/ci-build/actions/install@develop
         with:
           ref: develop
-      - run: enso-build enso --kind nightly prepare
+      - run: enso-build enso --kind nightly create
         id: prepare-step
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -41,7 +41,7 @@ jobs:
         with:
           ref: develop
       - name: Prepare release
-        run: enso-build enso --kind nightly prepare
+        run: enso-build enso --kind nightly publish
         working-directory: ${{ github.workspace }}/ci-build
         env:
           GITHUB_TOKEN: ${{ github.token }}
