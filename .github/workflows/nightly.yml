@@ -26,6 +26,7 @@ jobs:
         with:
           ref: develop
       - run: enso-build enso --kind nightly prepare
+        id: prepare-step
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
