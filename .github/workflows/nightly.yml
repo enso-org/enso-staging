@@ -8,9 +8,6 @@ env:
 concurrency: "releases"
 
 on:
-  push:
-    branches:
-      - develop
   schedule:
     - cron: "0 4 * * 2-6" # 4am (UTC) from Tuesday to Saturday (i.e. after every workday)
   workflow_dispatch:
@@ -23,7 +20,7 @@ jobs:
       ENSO_VERSION: ${{ steps.prepare-step.outputs.ENSO_VERSION }}
       ENSO_RELEASE_ID: ${{ steps.prepare-step.outputs.ENSO_RELEASE_ID }}
     steps:
-      - uses: enso-org/ci-build/actions/install@develop
+      - uses: enso-org/ci-build/actions/install
       - run: enso-build enso --kind nightly create-release
         id: prepare-step
 
@@ -34,7 +31,7 @@ jobs:
       ENSO_VERSION: ${{needs.prepare.outputs.ENSO_VERSION}}
       ENSO_RELEASE_ID: ${{needs.prepare.outputs.ENSO_RELEASE_ID}}
     steps:
-      - uses: enso-org/ci-build/actions/install@develop
+      - uses: enso-org/ci-build/actions/install
       - name: Prepare release
         run: enso-build enso --kind nightly publish-release
         working-directory: ${{ github.workspace }}/ci-build
@@ -60,5 +57,5 @@ jobs:
       fail-fast: false
 
     steps:
-      - uses: enso-org/ci-build/actions/install@develop
+      - uses: enso-org/ci-build/actions/install
       - run: enso-build enso --kind nightly upload-asset
