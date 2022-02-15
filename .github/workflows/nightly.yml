@@ -26,7 +26,6 @@ jobs:
       - uses: enso-org/ci-build/actions/install@develop
       - run: enso-build enso --kind nightly create-release
         id: prepare-step
-        env:
 
   finish:
     runs-on: [self-hosted]
