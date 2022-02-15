@@ -1,6 +1,7 @@
 name: Nightly Release CI
 
 env:
+  GITHUB_TOKEN: ${{ github.token }}
   # Specifies how many nightly releases should be kept. Any older releases are removed.
   NIGHTLIES_TO_KEEP: 20
 
@@ -26,7 +27,6 @@ jobs:
       - run: enso-build enso --kind nightly create-release
         id: prepare-step
         env:
-          GITHUB_TOKEN: ${{ github.token }}
 
   finish:
     runs-on: [self-hosted]
