@@ -2,7 +2,7 @@
 
 # General Repository Configuration
 repository:
-  name: enso
+  name: enso-staging
   description: Hybrid visual and textual functional programming.
   homepage: https://enso.org
   topics:
@@ -83,6 +83,10 @@ labels:
     color: "#ffdce5"
     description: A change that will not break a public API or user-facing behaviour
 
+  - name: "CI: Ready to merge"
+    color: "#ffffff"
+    description: TTT
+    
   - name: "Difficulty: Beginner"
     color: "#d1e9c4"
     description: Little prior knowledge required
