@@ -6,7 +6,7 @@ pull_request_rules:
     merge:
       method: squash
       commit_message_template: |
-          {{ title }} ({{ number }})
+          {{ title }} (#{{ number }})
       
           {{ body | get_section("### Pull Request Description", "") }}
 
