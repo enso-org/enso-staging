@@ -19,7 +19,7 @@
   </a>
   <a href="https://github.com/enso-org/enso/blob/develop/LICENSE">
     <img src="https://img.shields.io/static/v1?label=Compiler%20License&message=Apache%20v2&color=2ec352&labelColor=2c3239"
-         alt="License">
+         alt="License"> 
   </a>
   <a href="https://github.com/enso-org/enso/blob/develop/app/gui/LICENSE">
     <img src="https://img.shields.io/static/v1?label=GUI%20License&message=AGPL%20v3&color=2ec352&labelColor=2c3239"
