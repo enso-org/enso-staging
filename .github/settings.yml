@@ -213,22 +213,7 @@ branches:
         # Require branches to be up to date before merging.
         strict: true
         contexts:
-          - "Build and Test (macOS-latest)"
-          - "Build and Test (ubuntu-18.04)"
-          - "Build and Test (windows-latest)"
-          - "Docs Check"
-          - "Verify Notice Package"
           - "license/cla"
-          # GUI jobs
-          - "Build Info (macOS-latest)"
-          - "Assertions (macOS-latest)"
-          - "Linter (Linux, linter)"
-          - "Native Tests (Linux, test_native)"
-          - "WASM Tests (Linux, test_wasm)"
-          - "Build WASM (Linux, build_wasm)"
-          - "Build package (macOS-latest)"
-          - "Build package (windows-latest)"
-          - "Build package (Linux, package)"
       enforce_admins: null
       restrictions: null
   - name: "release/*.x"
