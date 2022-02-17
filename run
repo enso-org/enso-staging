@@ -12,6 +12,7 @@ process.on('unhandledRejection', error => { throw(error) })
 let args = process.argv.slice(2)
 
 // This option is very important.
+// It affects the validation of version.
 let skip_validation = '--skip-version-validation'
 async function init () {
     if(!args.includes(skip_validation)) {
