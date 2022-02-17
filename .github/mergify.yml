@@ -6,7 +6,9 @@ pull_request_rules:
     merge:
       method: squash
       commit_message_template: |
-          {{ body | get_section("### Pull Request Description", "") }}
+          {{ title }}
+      
+          {{ body | get_section("### Commit Message", "") }}
 
 - name: Automatic PR update
   conditions:
