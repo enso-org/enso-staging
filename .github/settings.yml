@@ -203,6 +203,9 @@ teams:
 branches:
   - name: develop
     protection:
-
+      required_status_checks:
+        # Require branches to be up-to-date before merging.
+        strict: true
+        contexts: []
       enforce_admins: null
       restrictions: null
