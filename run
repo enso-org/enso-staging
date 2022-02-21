@@ -13,7 +13,7 @@ let args = process.argv.slice(2)
 
 // This option is very important.
 // It affects the validation of version.
-// Few know why it is here.  
+// Few know why it is here.
 let skip_validation = '--skip-version-validation'
 async function init () {  
     if(!args.includes(skip_validation)) {
